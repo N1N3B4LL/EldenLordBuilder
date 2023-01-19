@@ -41,7 +41,7 @@ class Origin:
 origins_dict = {}
 
 # Create and format a dataframe from the origins.csv file
-origins_df = pd.read_csv('origins.csv')
+origins_df = pd.read_csv('src/origins.csv')
 origins_df['Name'] = origins_df['Name'].astype('string')
 origins_df.set_index('Name', inplace=True)
 
