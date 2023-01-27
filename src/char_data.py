@@ -7,11 +7,11 @@ StatBlock = dict[str: int]
 
 
 # Standardize a rounding function
-def round_down(n: float, dec: int = 0):
-    if dec == 0:
-        return math.floor(n)
-    factor = 10 ** dec
-    return math.floor(n * factor)/factor
+def round_down(number: float, decimals: int = 0):
+    if decimals == 0:
+        return math.floor(number)
+    factor = 10 ** decimals
+    return math.floor(number * factor)/factor
 
 
 # Defining a dataclass to handle our starting class attributes
@@ -61,6 +61,12 @@ class Tarnished:
     def __post_init__(self) -> None:
         self.bonus_stat_block = {stat: 0 for stat in self.origin.stat_block}
 
+    def set_name(self, new_name: str) -> None:
+        self._name = new_name
+
+    def set_origin(self, new_origin: Origin) -> None:
+        self.origin = new_origin
+
     # Define our Name property
     @property
     def name(self) -> str:
@@ -78,14 +84,18 @@ class Tarnished:
         _x = max([((lvl + 81) - 92) * 0.02, 0])
         return 0 if lvl == 713 else math.floor(((_x + 0.1) * ((lvl + 81)**2)) + 1)
 
-    # Define our Total Runes property
-    def total_runes(self, lvl: int = 0) -> int:
+    # Define our Total Runes calc and property
+    @property
+    def total_runes(self) -> int:
+        return self._total_runes() - self._total_runes(self.origin.level)
+
+    def _total_runes(self, lvl: int = 0) -> int:
         if lvl == 0:
             lvl = self.level
         if lvl == 1:
             return 0
         else:
-            return self.runes_needed(lvl=lvl) + self.total_runes(lvl=lvl - 1)
+            return self.runes_needed(lvl=lvl) + self._total_runes(lvl=lvl - 1)
 
     # Define setting a stat within possible parameters
     def set_stat(self, stat: str, val: int) -> None:
